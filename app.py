@@ -5,7 +5,7 @@ import parsing
 import random
 from jokeclass import Joke
 
-import db
+import database
 
 bot = telebot.TeleBot(config.token)
 
@@ -15,8 +15,10 @@ def welcome(message):
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     b1 = types.KeyboardButton("расскажи хороший анекдот")
     b2 = types.KeyboardButton("расскажи обычный анекдот")
+    b3 = types.KeyboardButton("расскажи анекдот, у которого много 👍")
+    b4 = types.KeyboardButton("расскажи анекдот, у которого много 👎")
     
-    markup.add(b1, b2)
+    markup.add(b1, b2, b3, b4)
     
     bot.send_message(message.chat.id, "здравствуйте", reply_markup=markup)
     
@@ -24,24 +26,32 @@ def welcome(message):
 def response(message):
     markup = types.InlineKeyboardMarkup(row_width=2)
 
+    if message.text not in [
+        "расскажи хороший анекдот",
+        "расскажи обычный анекдот",
+        "расскажи анекдот, у которого много 👍",
+        "расскажи анекдот, у которого много 👎",
+    ]:
+        bot.send_message(message.chat.id, "неправильная команда")
+        return
     
+    joke = Joke()
     if (message.text == "расскажи хороший анекдот"):
-        text = "kek"#utils.get_good(random.randint(1, 30))
-        item1 = types.InlineKeyboardButton("👍", callback_data='like')
-        item2 = types.InlineKeyboardButton("👎", callback_data='dislike')
-        markup.add(item1, item2)
-        
-        bot.send_message(message.chat.id, text, reply_markup=markup)
+        joke = parsing.get_good(random.randint(1, 30))
         
     elif (message.text == "расскажи обычный анекдот"):
         joke = parsing.get_any(random.randint(1, 1100))
-        item1 = types.InlineKeyboardButton("👍", callback_data=f'like{joke.id}')
-        item2 = types.InlineKeyboardButton("👎", callback_data=f'dislike{joke.id}')
-        markup.add(item1, item2)
-        bot.send_message(message.chat.id, str(joke), reply_markup=markup)
         
-    else:
-        bot.send_message(message.chat.id, "неправильная команда")
+    elif (message.text == "расскажи анекдот, у которого много 👍"):
+        joke = database.get_best()
+        
+    elif (message.text == "расскажи анекдот, у которого много 👎"):
+        joke = database.get_worst()
+        
+    item1 = types.InlineKeyboardButton("👍", callback_data=f'like{joke.id}')
+    item2 = types.InlineKeyboardButton("👎", callback_data=f'dislike{joke.id}')
+    markup.add(item1, item2)
+    bot.send_message(message.chat.id, str(joke), reply_markup=markup)
         
         
 @bot.callback_query_handler(func=lambda call: True)
@@ -64,8 +74,8 @@ def callback_inline(call):
                 
  
             # Remove inline buttons and update likes counter
-            db.update(id=id, delta=delta)
-            bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=str(db.get(id)),
+            database.update(id=id, delta=delta)
+            bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=str(database.get(id)),
                     reply_markup=None)
  
             

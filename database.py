@@ -1,4 +1,3 @@
-
 import sqlite3
 from jokeclass import Joke
 
@@ -6,6 +5,12 @@ from jokeclass import Joke
 def get(id, basename="mytable"):
     # Connect to the database
     conn = sqlite3.connect('data/jokes.db')
+    
+    conn.execute(f'''CREATE TABLE IF NOT EXISTS {basename}
+             (id INTEGER PRIMARY KEY AUTOINCREMENT,
+              text TEXT NOT NULL,
+              likes INTEGER KEY,
+              dislikes INTEGER KEY);''')
 
     # Retrieve data from the table
     cursor = conn.execute(f"SELECT text FROM {basename} WHERE id=?", (id,))
@@ -34,8 +39,8 @@ def add(joke, basename="mytable"):
     conn.execute(f'''CREATE TABLE IF NOT EXISTS {basename}
              (id INTEGER PRIMARY KEY AUTOINCREMENT,
               text TEXT NOT NULL,
-              likes INTEGER,
-              dislikes INTEGER);''')
+              likes INTEGER KEY,
+              dislikes INTEGER KEY);''')
     
     # Delete if joke is in the database
     old_joke = get(joke.id)
@@ -58,13 +63,33 @@ def clear_database(basename="mytable"):
     conn = sqlite3.connect('data/jokes.db')
     c = conn.cursor()
     c.execute(f"DROP TABLE IF EXISTS {basename}")
-    conn.execute(f'''CREATE TABLE {basename}
+    conn.execute(f'''CREATE TABLE IF NOT EXISTS {basename}
              (id INTEGER PRIMARY KEY AUTOINCREMENT,
               text TEXT NOT NULL,
-              likes TEXT NOT NULL,
-              dislikes TEXT NOT NULL);''')
+              likes INTEGER KEY,
+              dislikes INTEGER KEY);''')
     conn.commit()
     conn.close()
+    
+def get_best(basename="mytable"):
+    conn = sqlite3.connect('data/jokes.db')
+
+    c = conn.cursor()
+    c.execute(f"SELECT * FROM {basename} ORDER BY likes DESC LIMIT 1")
+    row = c.fetchone()
+
+    conn.close()
+    return Joke(id=row[0], text=row[1], likes=row[2], dislikes=row[3])
+
+def get_worst(basename="mytable"):
+    conn = sqlite3.connect('data/jokes.db')
+
+    c = conn.cursor()
+    c.execute(f"SELECT * FROM {basename} ORDER BY dislikes DESC LIMIT 1")
+    row = c.fetchone()
+
+    conn.close()
+    return Joke(id=row[0], text=row[1], likes=row[2], dislikes=row[3])
     
 def update(id, delta): #delta = (delta_likes, delta_dislikes)
     joke = get(id)
@@ -73,9 +98,11 @@ def update(id, delta): #delta = (delta_likes, delta_dislikes)
     add(joke)
     
 if __name__ == '__main__':
-    add(Joke(123, "test joke", 90, 10))
-    update(123, (0, 1))
+    add(Joke(200, "90 10", 90, 10))
+    add(Joke(201, "80 10", 80, 102))
+    add(Joke(202, "100 10", 100, 10))
+    add(Joke(100, "45 8", 45, 8))
     
-    print(get(123))
-    
+    print(get_best())
+    print(get_worst())
     clear_database()
