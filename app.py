@@ -5,7 +5,7 @@ import parsing
 import random
 from jokeclass import Joke
 
-import database
+import db
 
 bot = telebot.TeleBot(config.token)
 
@@ -43,10 +43,10 @@ def response(message):
         joke = parsing.get_any(random.randint(1, 1100))
         
     elif (message.text == "расскажи анекдот, у которого много 👍"):
-        joke = database.get_best()
+        joke = db.get_best()
         
     elif (message.text == "расскажи анекдот, у которого много 👎"):
-        joke = database.get_worst()
+        joke = db.get_worst()
         
     item1 = types.InlineKeyboardButton("👍", callback_data=f'like{joke.id}')
     item2 = types.InlineKeyboardButton("👎", callback_data=f'dislike{joke.id}')
@@ -74,8 +74,8 @@ def callback_inline(call):
                 
  
             # Remove inline buttons and update likes counter
-            database.update(id=id, delta=delta)
-            bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=str(database.get(id)),
+            db.update(id=id, delta=delta)
+            bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=str(db.get(id)),
                     reply_markup=None)
  
             

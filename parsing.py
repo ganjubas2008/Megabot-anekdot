@@ -1,7 +1,7 @@
 import requests
 import telebot
 import random
-import database
+import db
 
 from bs4 import BeautifulSoup
 from telebot import types
@@ -11,7 +11,7 @@ def get_any(id):
     if id < 0 or id > 1100:
         return "error"
     
-    if database.get(id).id == 0:    
+    if db.get(id).id == 0:    
         url = f'https://baneks.ru/{id}'
         response = requests.get(url=url)
 
@@ -19,9 +19,9 @@ def get_any(id):
     
         soup = BeautifulSoup(response.text, 'lxml')
         anek = soup.find('p')
-        database.add(Joke(id, anek.text, 0, 0))
+        db.add(Joke(id, anek.text, 0, 0))
 
-    return database.get(id)
+    return db.get(id)
      
 def get_good(num):
     if num < 0 or num >= 30:
