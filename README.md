@@ -7,8 +7,10 @@
 ```bash
 cd <folder_where_to_clone>
 git clone git@gitlab.akhcheck.ru:andrei.sadchikov/graphplotter.git .
+echo <your_token> > src/token.py
 pip install requirements.txt
-python3 app.py
+chmod +x run.sh
+./run.sh
 ```
 Здесь рекомендуется поменять токен в файл config.py, так как если запустить на двух машинах двух ботов с одинаковым токеном, они оба упадут.
 
