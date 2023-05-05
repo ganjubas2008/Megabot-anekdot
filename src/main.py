@@ -26,6 +26,13 @@ def welcome(message):
     markup.add(b1, b2, b3, b4)
 
     bot.send_message(message.chat.id, "здравствуйте", reply_markup=markup)
+    
+@bot.message_handler(commands=["help"])
+def welcome(message):
+
+    bot.send_message(message.chat.id, """Мегабот - анекдот.
+Для получения анекдота выберите опцию из отображённых на кнопках.
+Если пропадут кнопки, можно снова написать боту /start .""")
 
 
 @bot.message_handler(content_types=["text"])
