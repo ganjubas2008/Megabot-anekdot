@@ -5,7 +5,7 @@
 # Установка локально:
 ```bash
 cd <folder_where_to_clone>
-git clone git@gitlab.akhcheck.ru:andrei.sadchikov/graphplotter.git .
+git clone git@github.com:ganjubas2008/megabot-anekdot.git .
 echo <your_token> > src/config.py
 pip install requirements.txt
 chmod +x run.sh
