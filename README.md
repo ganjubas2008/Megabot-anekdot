@@ -1,8 +1,7 @@
 # @anekdot_megabot
-Бот парсит сайт с анекдотами и выдает случайный анекдот. Пользователи бота могут ставить лайки/дизлайки анекдотам.
-Реализована база данных в которой будут добавляться скачанные анекдоты (чтобы не делать избыточных запросов к сайту) и количество лайков/дизлайков у конкретного анекдота. Бот работает круглосуточно на удалённом сервере.
+The telegram bot parses a website with jokes and provides a random joke. Bot users can like/dislike jokes. Implemented a database where downloaded jokes will be added (to avoid redundant requests to the website) along with the number of likes/dislikes for a specific joke. The bot operates around the clock on a remote server.
 
-# Установка локально:
+# Installation locally:
 ```bash
 cd <folder_where_to_clone>
 git clone git@github.com:ganjubas2008/megabot-anekdot.git .
@@ -11,12 +10,11 @@ pip install requirements.txt
 chmod +x run.sh
 ./run.sh
 ```
-Здесь рекомендуется поменять токен в файл config.py, так как если запустить на двух машинах двух ботов с одинаковым токеном, они оба упадут.
-Если локально не запустится с первой попытки, нужно попробовать ещё пару раз, с чем связано такое поведение - не знаю.
+It is recommended to change the token in the config.py file here, as if two bots are launched on two machines with the same token, they will both crash.
+ If it doesn't start locally on the first try, you may need to try a couple more times.
 
-# Взаимодействие:
-Открыть телеграм, написать [@anekdot_megabot](https://web.telegram.org/z/#5971074804), далее поможет команда /help . 
-Если пропадут кнопки, можно снова написать боту /start .
+# Interaction:
+Open Telegram, write @anekdot_megabot, then the command /help will help. If the buttons disappear, you can write /start to the bot again.
 
 
 ![plot](./images/bot.png)
